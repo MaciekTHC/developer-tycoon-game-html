@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Tycoon - Symulator Dewelopera</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+</head>
+<body>
+    <div id="loadingScreen">
+        <div class="loading-content">
+            <h1>🏗️ Real Estate Tycoon</h1>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p>Ładowanie...</p>
+        </div>
+    </div>
+
+    <div id="gameContainer" style="display: none;">
+        <div id="hud">
+            <div class="hud-panel money-panel">
+                <div class="money-display">
+                    <span class="money-icon">💰</span>
+                    <span class="money-amount" id="playerMoney">100,000 zł</span>
+                </div>
+                <div class="income-display">
+                    <span class="income-icon">📈</span>
+                    <span class="income-amount" id="monthlyIncome">+0 zł/miesiąc</span>
+                </div>
+            </div>
+
+            <div class="hud-panel time-panel">
+                <div class="date-display" id="gameDate">Styczeń 2024</div>
+                <div class="time-controls">
+                    <button class="time-btn" id="pauseBtn">⏸️</button>
+                    <button class="time-btn active" id="normalSpeedBtn">▶️</button>
+                    <button class="time-btn" id="fastSpeedBtn">⏩</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mainMenu">
+            <div class="menu-section">
+                <button class="menu-btn" id="propertiesBtn">
+                    <span class="btn-icon">🏠</span>
+                    <span class="btn-text">Nieruchomości</span>
+                    <span class="btn-count" id="propertiesCount">0</span>
+                </button>
+                
+                <button class="menu-btn" id="buildBtn">
+                    <span class="btn-icon">🏗️</span>
+                    <span class="btn-text">Buduj</span>
+                </button>
+                
+                <button class="menu-btn" id="bankBtn">
+                    <span class="btn-icon">🏦</span>
+                    <span class="btn-text">Bank</span>
+                </button>
+                
+                <button class="menu-btn" id="vehiclesBtn">
+                    <span class="btn-icon">🚗</span>
+                    <span class="btn-text">Pojazdy</span>
+                    <span class="btn-count" id="vehiclesCount">0</span>
+                </button>
+                
+                <button class="menu-btn" id="achievementsBtn">
+                    <span class="btn-icon">🏆</span>
+                    <span class="btn-text">Osiągnięcia</span>
+                    <span class="btn-count" id="achievementsCount">0/6</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="notifications"></div>
+
+        <div id="modalOverlay" class="modal-overlay">
+            <div id="propertiesModal" class="modal">
+                <div class="modal-header">
+                    <h2>🏠 Zarządzanie Nieruchomościami</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-content">
+                    <div class="properties-tabs">
+                        <button class="tab-btn active" data-tab="owned">Posiadane</button>
+                        <button class="tab-btn" data-tab="market">Rynek</button>
+                        <button class="tab-btn" data-tab="lots">Działki</button>
+                    </div>
+                    <div class="properties-list" id="propertiesList"></div>
+                </div>
+            </div>
+
+            <div id="bankModal" class="modal">
+                <div class="modal-header">
+                    <h2>🏦 Bank</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-content">
+                    <div class="bank-info">
+                        <div class="loan-status">
+                            <h3>Status Pożyczek</h3>
+                            <div id="loansList">
+                                <p>Brak aktywnych pożyczek</p>
+                            </div>
+                        </div>
+                        <div class="loan-options">
+                            <h3>Dostępne Pożyczki</h3>
+                            <div class="loan-option">
+                                <h4>Pożyczka Mieszkaniowa</h4>
+                                <p>Oprocentowanie: 3.5% rocznie</p>
+                                <p>Maksymalna kwota: 500,000 zł</p>
+                                <div class="loan-form">
+                                    <input type="number" id="loanAmount" placeholder="Kwota pożyczki" min="10000" max="500000" step="10000" value="100000">
+                                    <select id="loanTerm">
+                                        <option value="60">5 lat</option>
+                                        <option value="120">10 lat</option>
+                                        <option value="180">15 lat</option>
+                                        <option value="240" selected>20 lat</option>
+                                    </select>
+                                    <button class="loan-btn" data-rate="3.5">Złóż wniosek</button>
+                                </div>
+                                <p class="monthly-payment" id="estimatedPayment"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="buildModal" class="modal">
+                <div class="modal-header">
+                    <h2>🏗️ Centrum Budowy</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-content">
+                    <div class="build-categories">
+                        <div class="category" data-category="residential">
+                            <h3>🏠 Budynki Mieszkalne</h3>
+                            <div class="building-options" id="buildingOptions"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="vehiclesModal" class="modal">
+                <div class="modal-header">
+                    <h2>🚗 Pojazdy</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-content">
+                    <div class="vehicles-list" id="vehiclesList"></div>
+                    <div class="vehicle-shop">
+                        <h3>Sklep z Pojazdami</h3>
+                        <div id="vehicleShop"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="achievementsModal" class="modal">
+                <div class="modal-header">
+                    <h2>🏆 Osiągnięcia</h2>
+                    <button class="close-btn">&times;</button>
+                </div>
+                <div class="modal-content">
+                    <div id="achievementsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/"
+            }
+        }
+    </script>
+    
+    <script type="module" src="src/core/Game.js"></script>
+</body>
+</html>
